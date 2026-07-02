@@ -5,7 +5,9 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 from uuid import uuid4
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "faka.db")
+import config
+
+DB_PATH = config.DATABASE_PATH
 
 
 async def init_db():

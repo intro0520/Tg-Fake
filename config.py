@@ -11,7 +11,7 @@ SUPPORT_USERNAME = os.getenv("SUPPORT_USERNAME", "admin")
 
 # 系统设置
 ORDER_DURATION_MINUTES = int(os.getenv("ORDER_DURATION_MINUTES", "30"))
-DATABASE_PATH = os.path.join(os.path.dirname(__file__), "faka.db")
+DATABASE_PATH = os.getenv("DATABASE_PATH", os.path.join(os.path.dirname(__file__), "faka.db"))
 
 # Web 服务
 WEB_HOST = os.getenv("WEB_HOST", "0.0.0.0")
