@@ -1,0 +1,144 @@
+{% set active_page = 'dashboard' %}
+{% extends "base.html" %}
+
+{% block title %}{{ t('dashboard') }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>📊 {{ t('dashboard') }}</h1>
+    <p class="text-muted">{{ t('realtime_stats') }} · <button class="btn btn-sm btn-secondary" onclick="location.reload()">{{ t('refresh') }}</button></p>
+</div>
+
+<!-- 统计卡片 -->
+<div class="grid grid-4">
+    <div class="stat-card">
+        <div class="stat-icon">📦</div>
+        <div class="stat-info">
+            <div class="stat-number">{{ stats.products }}</div>
+            <div class="stat-label">{{ t('active_products') }}</div>
+        </div>
+    </div>
+    <div class="stat-card stat-green">
+        <div class="stat-icon">📋</div>
+        <div class="stat-info">
+            <div class="stat-number">{{ stats.stock }}</div>
+            <div class="stat-label">{{ t('available_stock') }}</div>
+        </div>
+    </div>
+    <div class="stat-card stat-orange">
+        <div class="stat-icon">🛒</div>
+        <div class="stat-info">
+            <div class="stat-number">{{ stats.paid_orders }}</div>
+            <div class="stat-label">{{ t('completed_orders') }}</div>
+        </div>
+    </div>
+    <div class="stat-card stat-purple">
+        <div class="stat-icon">💰</div>
+        <div class="stat-info">
+            <div class="stat-number">¥{{ stats.total_revenue | format_price }}</div>
+            <div class="stat-label">{{ t('total_revenue') }}</div>
+        </div>
+    </div>
+</div>
+
+<!-- 快捷操作 -->
+<div class="card">
+    <div class="card-header">
+        <h2>⚡ {{ t('quick_actions') }}</h2>
+    </div>
+    <div class="card-body">
+        <div class="btn-group">
+            <a href="/products?lang={{ lang }}" class="btn btn-primary">📦 {{ t('manage_products') }}</a>
+            <a href="/orders?lang={{ lang }}" class="btn btn-secondary">📋 {{ t('view_orders') }}</a>
+        </div>
+    </div>
+</div>
+
+<!-- 最近订单 -->
+<div class="card">
+    <div class="card-header">
+        <h2>📋 {{ t('recent_orders') }}</h2>
+        <a href="/orders?lang={{ lang }}" class="btn btn-sm btn-secondary">{{ t('view_orders') }}</a>
+    </div>
+    <div class="card-body p-0">
+        {% if orders %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>{{ t('order_id') }}</th>
+                    <th>{{ t('product') }}</th>
+                    <th>{{ t('amount') }}</th>
+                    <th>{{ t('status') }}</th>
+                    <th>{{ t('time') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders[:10] %}
+                <tr>
+                    <td><code>{{ order.id[:8] }}</code></td>
+                    <td>{{ order.product_name }}</td>
+                    <td><strong>¥{{ order.price }}</strong></td>
+                    <td>
+                        {% if order.status == 1 %}
+                        <span class="badge badge-success">{{ t('completed') }}</span>
+                        {% else %}
+                        <span class="badge badge-warning">{{ t('pending') }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-muted">{{ order.created_at | timestamp_to_date }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <p>{{ t('no_order_data') }}</p>
+            <a href="/products?lang={{ lang }}" class="btn btn-primary">{{ t('go_add_products') }}</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- 商品库存概览 -->
+{% if products %}
+<div class="card">
+    <div class="card-header">
+        <h2>📦 {{ t('product_inventory') }}</h2>
+        <a href="/products?lang={{ lang }}" class="btn btn-sm btn-secondary">{{ t('manage_products') }}</a>
+    </div>
+    <div class="card-body p-0">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>{{ t('product_name') }}</th>
+                    <th>{{ t('price') }}</th>
+                    <th>{{ t('stock') }}</th>
+                    <th>{{ t('sales') }}</th>
+                    <th>{{ t('stock_status') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td><strong>{{ product.name }}</strong></td>
+                    <td>¥{{ product.price }}</td>
+                    <td>{{ product.stock_count }}</td>
+                    <td>{{ product.order_count }}</td>
+                    <td>
+                        {% if product.stock_count > 10 %}
+                        <span class="badge badge-success">{{ t('sufficient') }}</span>
+                        {% elif product.stock_count > 0 %}
+                        <span class="badge badge-warning">{{ t('low') }}</span>
+                        {% else %}
+                        <span class="badge badge-danger">{{ t('out_of_stock') }}</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ t('dashboard') }}{% endblock %} — 🎫 Tg Faka</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <span class="brand-icon">🎫</span>
+            <span class="brand-text">Tg Faka</span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/?lang={{ lang }}" class="nav-item {% if active_page == 'dashboard' %}active{% endif %}">
+                <span class="nav-icon">📊</span> {{ t('dashboard') }}
+            </a>
+            <a href="/products?lang={{ lang }}" class="nav-item {% if active_page == 'products' %}active{% endif %}">
+                <span class="nav-icon">📦</span> {{ t('products') }}
+            </a>
+            <a href="/orders?lang={{ lang }}" class="nav-item {% if active_page == 'orders' %}active{% endif %}">
+                <span class="nav-icon">📋</span> {{ t('orders') }}
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <small>&copy; 2026 Tg Faka</small>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <button class="btn btn-icon" id="sidebarToggle">☰</button>
+            <span class="topbar-right" style="display:flex;gap:8px;align-items:center;">
+                {% if bot_running is defined and bot_running %}
+                <span class="status-indicator status-online"></span>
+                <span class="text-success small">● Online</span>
+                {% else %}
+                <span class="status-indicator status-offline"></span>
+                <span class="text-danger small">● {{ t('bot_stopped') }}</span>
+                {% endif %}
+                <a href="?lang={{ other_lang }}" class="btn btn-sm btn-secondary">🌐 {{ 'EN' if lang == 'zh' else '中文' }}</a>
+                <a href="/" class="btn btn-sm btn-secondary">{{ t('refresh') }}</a>
+            </span>
+        </header>
+
+        <div class="content-wrapper">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

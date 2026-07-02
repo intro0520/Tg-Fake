@@ -1,0 +1,105 @@
+{% set active_page = 'products' %}
+{% extends "base.html" %}
+
+{% block title %}{{ t('products') }}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="page-header-left">
+        <h1>📦 {{ t('products') }}</h1>
+        <p class="text-muted">{{ t('manage_products') }}</p>
+    </div>
+    <button class="btn btn-primary" onclick="toggleAddProductForm()">+ {{ t('add_new_product') }}</button>
+</div>
+
+<div class="card" id="addProductCard" style="display: none;">
+    <div class="card-header">
+        <h2>{{ t('add_new_product') }}</h2>
+    </div>
+    <div class="card-body">
+        <form id="addProductForm" onsubmit="addProduct(event)">
+            <div class="form-group">
+                <label class="form-label">{{ t('product_name_label') }}</label>
+                <input type="text" class="form-control" name="name" required placeholder="如：ChatGPT 账号">
+            </div>
+            <div class="form-group">
+                <label class="form-label">{{ t('product_desc_label') }}</label>
+                <textarea class="form-control" name="description" rows="3" placeholder="如：ChatGPT Plus 订阅账号"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">{{ t('price_label') }}</label>
+                <input type="number" class="form-control" name="price" required step="0.01" min="0.01" placeholder="如：299">
+            </div>
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary">{{ t('add_product') }}</button>
+                <button type="button" class="btn btn-secondary" onclick="toggleAddProductForm()">{{ t('cancel') }}</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2>{{ t('all_products') }}</h2>
+    </div>
+    <div class="card-body p-0">
+        {% if products %}
+        <div class="product-grid">
+            {% for product in products %}
+            <div class="product-card">
+                <div class="product-header">
+                    <div class="product-name">{{ product.name }}</div>
+                    <div class="product-price">¥{{ product.price }}</div>
+                </div>
+                {% if product.description %}
+                <div class="product-desc">{{ product.description }}</div>
+                {% endif %}
+                <div class="product-stats">
+                    <span class="product-stat">
+                        📦 {{ t('stock') }}: <strong>{{ product.stock_count }}</strong>
+                    </span>
+                    <span class="product-stat">
+                        📊 {{ t('sales') }}: <strong>{{ product.order_count }}</strong>
+                    </span>
+                </div>
+                <div class="product-actions">
+                    <button class="btn btn-sm btn-primary" onclick="openStockModal('{{ product.id }}', '{{ product.name }}{{ t('add_stock') }}</button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteProduct('{{ product.id }}')">{{ t('delete') }}</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">📦</div>
+            <p>{{ t('no_products') }}</p>
+            <p class="text-muted">{{ t('click_add_to_create') }}</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="modal-overlay" id="stockModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="stockModalTitle">{{ t('add_stock') }}</h3>
+            <button class="btn btn-icon" onclick="closeStockModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label">{{ t('stock_content_label') }}</label>
+                <textarea class="form-control" id="stockContents" rows="10" placeholder="{{ t('stock_content_label') }}"></textarea>
+            </div>
+            <div id="existingStock">
+                <h4>{{ t('existing_stock') }}</h4>
+                <div id="stockList" class="stock-list"></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeStockModal()">{{ t('close') }}</button>
+            <button class="btn btn-primary" onclick="addStock()">{{ t('add_stock') }}</button>
+            <button class="btn btn-danger" onclick="clearStock()">{{ t('clear_all') }}</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
