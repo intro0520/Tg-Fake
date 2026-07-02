@@ -1,49 +1,56 @@
 @echo off
 chcp 65001 >nul 2>&1
 echo ============================================
-echo    🎫 Telegram 发卡系统 v1.0.0        
+echo    🎫 Telegram FAKA System v1.0.0
 echo ============================================
 echo.
 
+cd /d D:\telegram-faka-python
+
+REM ==== 读取 .env 中的端口 ====
+set WEB_PORT=8000
+for /f "tokens=1,2 delims==" %%A in (.env) do (
+    if "%%A"=="WEB_PORT" set WEB_PORT=%%B
+)
+
 REM 检查端口占用
-netstat -ano | findstr ":8001" >nul && (
-    echo [!] 端口 8001 已被占用
-    netstat -ano | findstr ":8001"
+netstat -ano | findstr ":%WEB_PORT%" >nul && (
+    echo [!] Port %WEB_PORT% is already in use
+    netstat -ano | findstr ":%WEB_PORT%"
     echo.
-    echo 请修改 .env 中的 WEB_PORT 或关闭占用该端口的程序
+    echo Change WEB_PORT in .env or stop the process using this port
+    pause
     exit /b 1
 )
 
-cd /d D:\telegram-faka-python
+echo [+] Using port: %WEB_PORT%
 
 REM 检查虚拟环境
 IF NOT EXIST venv (
-    echo [+] 正在创建 Python 虚拟环境...
+    echo [+] Creating Python virtual environment...
     "C:\Users\intro\.workbuddy\binaries\python\versions\3.13.12\python.exe" -m venv venv
 )
 
 REM 激活虚拟环境并安装依赖
-echo [+] 正在检查依赖...
+echo [+] Checking dependencies...
 call venv\Scripts\activate.bat >nul 2>&1
 python -c "import fastapi, telegram, aiosqlite" 2>nul || (
-    echo [+] 正在安装依赖...
+    echo [+] Installing dependencies...
     python -m pip install -q python-dotenv python-telegram-bot aiosqlite uvicorn jinja2
 )
 
 REM 初始化数据库
-echo [+] 正在初始化数据库...
+echo [+] Initializing database...
 python -c "import asyncio; from database import init_db; asyncio.run(init_db())"
 
 REM 启动服务
-echo [+] 启动服务...
 echo.
-echo =================================================================
-echo      🎫 发卡系统已启动
+echo ============================================================
+echo    🎫 FAKA System Started
 echo.
-echo      📊 管理后台: http://localhost:8001        
-echo      📝 日志文件: D:\telegram-faka-python\server.log
+echo    📊 Dashboard: http://localhost:%WEB_PORT%
+echo    🤖 Send /start to your Telegram Bot
+echo ============================================================
 echo.
-echo      按 Ctrl+C 停止服务
-echo =================================================================
 
-"C:\Users\intro\.workbuddy\binaries\python\versions\3.13.12\python.exe" -m uvicorn web:app --host 0.0.0.0 --port 8001 --log-level info
+"C:\Users\intro\.workbuddy\binaries\python\versions\3.13.12\python.exe" -m uvicorn web:app --host 0.0.0.0 --port %WEB_PORT% --log-level info

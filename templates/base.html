@@ -49,6 +49,15 @@
         </div>
     </main>
 
+    <script>
+        // 多语言翻译字典（供前端JS使用）
+        window.T = {{ T|default('{}')|safe }};
+        window.gettext = function(key) {
+            const lang = new URLSearchParams(window.location.search).get('lang') || '{{ lang }}';
+            if (window.T[lang]) return window.T[lang][key] || key;
+            return key;
+        };
+    </script>
     <script src="/static/js/main.js"></script>
 </body>
 </html>

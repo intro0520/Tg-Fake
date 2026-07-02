@@ -1,8 +1,10 @@
-"""多语言支持"""
+"""多语言支持 - 前后端统一翻译"""
 import config
+import json
 
 TRANSLATIONS = {
     "zh": {
+        # 模板 / Template
         "dashboard": "仪表盘",
         "products": "商品管理",
         "orders": "订单管理",
@@ -45,7 +47,7 @@ TRANSLATIONS = {
         "add_stock": "添加库存",
         "delete": "删除",
         "no_stock": "暂无库存",
-        "click_add_to_create": "点击右上角\"添加商品\"来创建您的第一个商品",
+        "click_add_to_create": '点击右上角"添加商品"来创建您的第一个商品',
         "manage_stock": "管理库存 - ",
         "stock_content_label": "库存内容（每行一条，将自动添加）",
         "existing_stock": "现有库存",
@@ -54,6 +56,8 @@ TRANSLATIONS = {
         "confirm_clear_all": "确定要清空全部库存？此操作不可恢复！",
         "confirm_delete_product": "确定要删除该商品？库存和订单也会被删除。",
         "stock_added": "已添加 {} 条库存",
+        "feature_wip": "功能开发中...",
+        "delete_failed": "删除失败",
         "stock_cleared": "库存已清空",
         "product_deleted": "删除成功！",
         "product_added": "商品添加成功！",
@@ -61,8 +65,21 @@ TRANSLATIONS = {
         "user": "用户",
         "card_management": "发卡系统",
         "bot_stopped": "Bot 已停止（未配置 Token）",
+        # 前端JS / Frontend JS
+        "network_error": "网络错误",
+        "loading": "加载中...",
+        "load_failed": "加载失败",
+        "available": "可用",
+        "used": "已用",
+        "enter_stock_content": "请输入库存内容",
+        "confirm_delete_title": "确认删除",
+        "add_success": "添加成功",
+        "delete_success": "删除成功",
+        "operation_success": "操作成功",
+        "operation_failed": "操作失败",
     },
     "en": {
+        # Template
         "dashboard": "Dashboard",
         "products": "Products",
         "orders": "Orders",
@@ -105,7 +122,7 @@ TRANSLATIONS = {
         "add_stock": "Add Stock",
         "delete": "Delete",
         "no_stock": "No stock",
-        "click_add_to_create": "Click \"Add New Product\" above to create your first product",
+        "click_add_to_create": 'Click "Add New Product" above to create your first product',
         "manage_stock": "Manage Stock - ",
         "stock_content_label": "Stock content (one per line, will be auto-added)",
         "existing_stock": "Existing Stock",
@@ -114,6 +131,8 @@ TRANSLATIONS = {
         "confirm_clear_all": "Are you sure you want to clear all stock?",
         "confirm_delete_product": "Delete this product? Stock and orders will also be deleted.",
         "stock_added": "{} stock items added",
+        "feature_wip": "Feature WIP...",
+        "delete_failed": "Delete failed",
         "stock_cleared": "Stock cleared",
         "product_deleted": "Deleted successfully!",
         "product_added": "Product added successfully!",
@@ -121,6 +140,18 @@ TRANSLATIONS = {
         "user": "User",
         "card_management": "Card System",
         "bot_stopped": "Bot stopped (token not configured)",
+        # Frontend JS
+        "network_error": "Network error",
+        "loading": "Loading...",
+        "load_failed": "Load failed",
+        "available": "Available",
+        "used": "Used",
+        "enter_stock_content": "Please enter stock content",
+        "confirm_delete_title": "Confirm Delete",
+        "add_success": "Added successfully",
+        "delete_success": "Deleted successfully",
+        "operation_success": "Operation successful",
+        "operation_failed": "Operation failed",
     },
 }
 
@@ -130,9 +161,14 @@ def get_locale():
 
 
 def t(key: str, locale: str = None) -> str:
-    """翻译"""
+    """翻译（后端模板用）"""
     loc = locale or get_locale()
     return TRANSLATIONS.get(loc, TRANSLATIONS["en"]).get(key, key)
+
+
+def get_translations_json(locale: str) -> str:
+    """获取指定语言的完整翻译字典，用于前端JS"""
+    return json.dumps(TRANSLATIONS.get(locale, TRANSLATIONS["en"]), ensure_ascii=False)
 
 
 def switch_locale():

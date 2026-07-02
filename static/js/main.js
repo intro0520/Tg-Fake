@@ -1,5 +1,6 @@
 /**
  * 发卡系统管理后台 - 前端交互
+ * 支持双语：使用 window.gettext(key) 获取翻译
  */
 
 // ==================== 商品操作 ====================
@@ -21,28 +22,28 @@ async function addProduct(event) {
         });
         const result = await response.json();
         if (result.success) {
-            showAlert('商品添加成功！', 'success');
+            showAlert(gettext('product_added'), 'success');
             setTimeout(() => location.reload(), 800);
         } else {
-            showAlert('添加失败: ' + (result.detail || '未知错误'), 'danger');
+            showAlert(gettext('operation_failed') + ': ' + (result.detail || 'Unknown error'), 'danger');
         }
     } catch (error) {
-        showAlert('网络错误', 'danger');
+        showAlert(gettext('network_error'), 'danger');
     }
 }
 
 async function deleteProduct(productId) {
-    if (!confirm('确定要删除该商品？库存和订单也会被删除。')) return;
+    if (!confirm(gettext('confirm_delete_product'))) return;
     try {
         const response = await fetch(`/api/products/${productId}`, { method: 'DELETE' });
         if (response.ok) {
-            showAlert('删除成功！', 'success');
+            showAlert(gettext('delete_success'), 'success');
             setTimeout(() => location.reload(), 800);
         } else {
-            showAlert('删除失败', 'danger');
+            showAlert(gettext('delete_failed') || gettext('operation_failed'), 'danger');
         }
     } catch (error) {
-        showAlert('网络错误', 'danger');
+        showAlert(gettext('network_error'), 'danger');
     }
 }
 
@@ -52,7 +53,7 @@ let currentProductId = null;
 
 async function openStockModal(productId, productName) {
     currentProductId = productId;
-    document.getElementById('stockModalTitle').textContent = "管理库存 - " + productName;
+    document.getElementById('stockModalTitle').textContent = gettext('manage_stock') + productName;
     document.getElementById('stockContents').value = '';
     document.getElementById('stockModal').classList.add('active');
 
@@ -65,12 +66,12 @@ async function openStockModal(productId, productName) {
             <div class="stock-item">
                 ${escapeHtml(item.content)}
                 <span class="badge badge-${item.status === 1 ? 'success' : 'secondary'}">
-                    ${item.status === 1 ? '可用' : '已用'}
+                    ${item.status === 1 ? gettext('available') : gettext('used')}
                 </span>
             </div>
         `).join('');
     } catch (error) {
-        document.getElementById('stockList').innerHTML = '<p class="text-muted">加载失败</p>';
+        document.getElementById('stockList').innerHTML = `<p class="text-muted">${gettext('load_failed')}</p>`;
     }
 }
 
@@ -83,7 +84,7 @@ async function addStock() {
     if (!currentProductId) return;
     const contents = document.getElementById('stockContents').value;
     if (!contents.trim()) {
-        showAlert('请输入库存内容', 'warning');
+        showAlert(gettext('enter_stock_content'), 'warning');
         return;
     }
 
@@ -96,38 +97,37 @@ async function addStock() {
         });
         const result = await response.json();
         if (result.success) {
-            showAlert(`已添加 ${result.count} 条库存`, 'success');
+            showAlert(gettext('stock_added').replace('{}', result.count), 'success');
             closeStockModal();
             setTimeout(() => location.reload(), 800);
         } else {
-            showAlert('添加失败', 'danger');
+            showAlert(gettext('operation_failed'), 'danger');
         }
     } catch (error) {
-        showAlert('网络错误', 'danger');
+        showAlert(gettext('network_error'), 'danger');
     }
 }
 
 async function clearStock() {
     if (!currentProductId) return;
-    if (!confirm('确定要清空全部库存？此操作不可恢复！')) return;
+    if (!confirm(gettext('confirm_clear_all'))) return;
 
     try {
         const response = await fetch(`/api/products/${currentProductId}/stock`, { method: 'DELETE' });
         if (response.ok) {
-            showAlert('库存已清空', 'success');
+            showAlert(gettext('stock_cleared'), 'success');
             closeStockModal();
             setTimeout(() => location.reload(), 800);
         }
     } catch (error) {
-        showAlert('网络错误', 'danger');
+        showAlert(gettext('network_error'), 'danger');
     }
 }
 
 // ==================== 订单操作 ====================
 
 async function markPaid(orderId) {
-    // 占位：Web 端标记支付
-    showAlert('功能开发中...请在 Bot 端完成支付', 'warning');
+    showAlert(gettext('feature_wip'), 'warning');
 }
 
 // ==================== 辅助函数 ====================
@@ -167,16 +167,5 @@ document.addEventListener('DOMContentLoaded', () => {
     // ESC 关闭模态框
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closeStockModal();
-    });
-
-    // 时间相对化
-    document.querySelectorAll('.time-ago').forEach(el => {
-        const ts = parseInt(el.dataset.timestamp) * 1000;
-        const now = Date.now();
-        const diff = now - ts;
-        if (diff < 60000) el.textContent = '刚刚';
-        else if (diff < 3600000) el.textContent = `${Math.floor(diff / 60000)} 分钟前`;
-        else if (diff < 86400000) el.textContent = `${Math.floor(diff / 3600000)} 小时前`;
-        else el.textContent = new Date(ts).toLocaleDateString();
     });
 });

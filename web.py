@@ -11,7 +11,7 @@ import asyncio
 
 import config
 import database as db
-from i18n import t as translate, switch_locale
+from i18n import t as translate, switch_locale, get_translations_json
 
 BASE_DIR = os.path.dirname(__file__)
 
@@ -92,6 +92,7 @@ async def index(request: Request):
         "lang": lang,
         "other_lang": switch_locale(),
         "t": lambda key: translate(key, lang),
+        "T": get_translations_json(lang),
         "bot_running": False,
         "stats": stats,
         "products": products,
@@ -111,6 +112,7 @@ async def products_page(request: Request):
         "lang": lang,
         "other_lang": switch_locale(),
         "t": lambda key: translate(key, lang),
+        "T": get_translations_json(lang),
         "bot_running": False,
         "products": products,
     })
@@ -128,6 +130,7 @@ async def orders_page(request: Request):
         "lang": lang,
         "other_lang": switch_locale(),
         "t": lambda key: translate(key, lang),
+        "T": get_translations_json(lang),
         "bot_running": False,
         "orders": orders,
     })

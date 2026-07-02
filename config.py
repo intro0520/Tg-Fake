@@ -15,7 +15,7 @@ DATABASE_PATH = os.getenv("DATABASE_PATH", os.path.join(os.path.dirname(__file__
 
 # Web 服务
 WEB_HOST = os.getenv("WEB_HOST", "0.0.0.0")
-WEB_PORT = int(os.getenv("WEB_PORT", "8001"))
+WEB_PORT = int(os.getenv("WEB_PORT", "8000"))
 
 # 多语言
 DEFAULT_LOCALE = os.getenv("DEFAULT_LOCALE", "zh")
