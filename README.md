@@ -211,7 +211,7 @@ To add a new language: add a new key in `i18n.py` → `TRANSLATIONS` dict, and a
 
 ## 中文
 
-TG-Faka 是一个 **开源的 Telegram 自动发卡机器人**。在 Telegram 里卖礼品卡、序列号、游戏 Key 等数字商品 — 浏览、下单、发货全自动，零人工。
+TG-Faka 是一个 **开源的 Telegram 自动发卡机器人**。礼品卡、序列号、游戏 Key、付费群 等数字商品 — 浏览、下单、发货全自动，零人工。
 
 ---
 
