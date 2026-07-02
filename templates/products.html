@@ -63,7 +63,7 @@
                     </span>
                 </div>
                 <div class="product-actions">
-                    <button class="btn btn-sm btn-primary" onclick="openStockModal('{{ product.id }}', '{{ product.name }}{{ t('add_stock') }}</button>
+                    <button class="btn btn-sm btn-primary" onclick="openStockModal('{{ product.id }}', '{{ product.name }}')">{{ t('add_stock') }}</button>
                     <button class="btn btn-sm btn-danger" onclick="deleteProduct('{{ product.id }}')">{{ t('delete') }}</button>
                 </div>
             </div>

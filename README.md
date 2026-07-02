@@ -1,140 +1,165 @@
+# 🎫 Telegram Auto Card Delivery System / Telegram 自动发卡系统
+
+> **Open-source · Self-hosted · Multi-payment**  
+> 开源 · 自托管 · 支持多种支付方式，在 Telegram 里自动售卖数字商品（礼品卡、序列号、游戏 Key 等）。
+
 <div align="right">
 
-🌐 **Language**: [中文](#) · [English](#readme-en)
-
-</div>
-
-<div align="center">
-
-# 🎫 Telegram Auto Card Delivery System
-
-**Open-source · Self-hosted · Multi-payment**
-
-*Automated digital card delivery bot for Telegram. Sell gift cards, license keys, game codes, and any digital goods.*
-
-[![Python](https://img.shields.io/badge/Python-3.9%2B-blue?style=flat-square&logo=python&logoColor=white)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.124%2B-009688?style=flat-square&logo=fastapi&logoColor=white)
-[![Telegram](https://img.shields.io/badge/Telegram-Bot-2CA5E0?style=flat-square&logo=telegram&logoColor=white)
-[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
-
-[Features](#features) · [Quick Start](#quick-start) · [Payment Gateways](#payment-gateways) · [Screenshots](#screenshots) · [Development](DEVELOPMENT.md)
+🌐 **语言 / Language**: [English](#english--quick-start) · [中文](#中文--快速上手)
 
 </div>
 
 ---
 
-## ✨ Features
+## ✨ Features / 功能特色
 
-| Feature | Description |
-|---------|-------------|
-| 🤖 **Telegram Bot** | Automated product browsing, ordering, and delivery |
-| 🌐 **Web Admin Dashboard** | Clean dark-theme UI for managing products, orders, and inventory |
-| 💳 **Multi-Payment Gateway** | Simulated · EPAY · NOWPayments · Stripe |
-| 📦 **Inventory Management** | Add stock in bulk, track usage |
-| 🔌 **Extensible** | Modular payment gateway, easy to add new providers |
-| 🛡 **Order Control** | One pending order per user, timeout auto-cancellation |
-| 📊 **Statistics** | Real-time stats for revenue, inventory, and sales |
+| Feature 功能 | Description / 描述 |
+|---|---|
+| 🤖 **Telegram Bot** | 用户发 `/start` 就能看到商品，点击购买自动发货，全程无需人工 |
+| 🌐 **Web Admin** 管理后台 | 深色主题仪表盘，管理商品、订单、库存 |
+| 💳 **Multi-Payment** 多支付方式 | 模拟支付（开箱即用） · EPAY · NOWPayments · Stripe |
+| 📦 **Inventory** 库存管理 | 批量导入卡密，实时统计可用库存 |
+| 🛡 **Order Control** 订单控制 | 每人同时最多 1 笔未支付订单，超时自动取消 |
 
 ---
 
-## 🚀 Quick Start
+## English — Quick Start
 
-### Prerequisites
-
-- Python 3.9 or higher
-- pip
-
-### 1. Clone & Install
+### Step 1: Get the code
 
 ```bash
-git clone https://github.com/your-username/tg-faka.git
-cd tg-faka
+git clone https://github.com/intro0520/Tg-Fake.git
+cd Tg-Fake
+```
+
+### Step 2: Install dependencies
+
+```bash
 pip install -r requirements.txt
 ```
 
-### 2. Configure (optional - works out-of-the-box)
-
-Copy `.env.example` to `.env` and fill in your details:
+### Step 3: Run
 
 ```bash
-copy .env.example .env
+python -m uvicorn web:app --host 0.0.0.0 --port 8001
 ```
 
-Minimum config for testing:
+Then open your browser: **http://localhost:8001**
+
+> 🌐 Click **EN** / **中文** in the top-right corner to switch language.
+
+#### What you'll see
+
+- **Dashboard** — revenue, stock, and order stats at a glance
+- **Products** — add products, import card keys, manage stock
+- **Orders** — view all orders and customer info
+
+#### Payment is optional for testing
+
+Out of the box, payments are **simulated** — orders complete instantly. To accept real payments, edit your `.env`:
 
 ```env
-# Leave empty for testing - simulated payment enabled by default
-BOT_TOKEN=
-ADMIN_TG_ID=0
-```
-
-For production, configure at minimum:
-
-```env
-BOT_TOKEN=123456:ABC-DEF...
-ADMIN_TG_ID=123456789
+# For crypto (Bitcoin, USDT, etc.)
 PAYMENT_MODE=nowpayments
-NOWPAYMENTS_API_KEY=your_key
+NOWPAYMENTS_API_KEY=your-api-key
+
+# For credit cards
+PAYMENT_MODE=stripe
+STRIPE_API_KEY=sk_live_xxx
 ```
 
-### 3. Run
-
-#### Development (reload enabled)
-
-```bash
-python -m uvicorn web:app --host 0.0.0.0 --port 8001 --reload
-```
-
-#### Production
-
-```bash
-python -m uvicorn web:app --host 0.0.0.0 --port 8001 --workers 4
-```
-
-Or using Docker:
-
-```bash
-docker compose up -d
-```
-
-### 4. Access
-
-| Service | URL |
-|---------|-----|
-| 🌐 Web Admin | `http://localhost:8001` |
-| 🔌 API Docs | `http://localhost:8001/docs` |
-| 🏥 Health Check | `http://localhost:8001/health` |
+[Full payment setup guide →](README.md#中文--支付配置)
 
 ---
 
-## 💳 Payment Gateways
+## 中文 — 快速上手
 
-The system supports multiple payment gateways, toggle via `PAYMENT_MODE` in `.env`:
+### 第一步：拉取项目
 
-| Mode | Description | Config Required |
-|------|-------------|----------------|
-| `simulate` | Simulated testing (default) | None |
-| `epay` | EPAY (Alipay/WeChat QR) | `EPAY_PID`, `EPAY_KEY`, `EPAY_URL` |
-| `nowpayments` | Bitcoin, USDT, and 100+ cryptos | `NOWPAYMENTS_API_KEY` |
-| `stripe` | Visa/Mastercard credit cards | `STRIPE_API_KEY`, `STRIPE_WEBHOOK_SECRET` |
+```bash
+git clone https://github.com/intro0520/Tg-Fake.git
+cd Tg-Fake
+```
 
-### Setup NOWPayments (Crypto)
+### 第二步：安装依赖
 
-1. Register at [nowpayments.io](https://nowpayments.io)
-2. Get your API Key
-3. Add to `.env`:
+```bash
+pip install -r requirements.txt
+```
+
+### 第三步：运行
+
+```bash
+python -m uvicorn web:app --host 0.0.0.0 --port 8001
+```
+
+打开浏览器访问：**http://localhost:8001**
+
+> 🌐 点击右上角 **中文** / **EN** 切换语言。
+
+#### 你会看到
+
+- **仪表盘** — 一眼看清营收、库存、订单
+- **商品管理** — 添加商品、批量导入卡密、查看可用库存
+- **订单管理** — 查看所有订单和顾客信息
+
+#### 支付可以暂时不管
+
+默认开启**模拟支付** — 下单秒完成，方便测试。真正收款时再编辑 `.env`：
+
+```env
+# 加密货币（比特币、USDT 等）
+PAYMENT_MODE=nowpayments
+NOWPAYMENTS_API_KEY=your-api-key
+
+# 信用卡 / 借记卡
+PAYMENT_MODE=stripe
+STRIPE_API_KEY=sk_live_xxx
+```
+
+[完整支付配置指南 →](README.md#中文--支付配置)
+
+---
+
+## 🤖 机器人命令 / Bot Commands
+
+| 命令 Command | 说明 Description |
+|---|---|
+| `/start` | 👋 开始 / 浏览商品 Welcome & browse |
+| `/admin` | 🛠️ 管理员面板 Admin panel |
+| `/add 名称 描述 价格` | ➕ 添加商品 Add product |
+| `/stock 商品ID` | 📦 查看某商品库存 View inventory |
+
+---
+
+## 💳 中文 — 支付配置
+
+本项目通过 `.env` 里的 `PAYMENT_MODE` 切换支付方式：
+
+| 模式 | 支付方式 | 需要填写的字段 |
+|---|---|---|
+| `simulate` | 模拟支付（默认，开箱即用） | 无需填写 |
+| `epay` | 易支付（支付宝/微信扫码） | `EPAY_PID`, `EPAY_KEY`, `EPAY_URL` |
+| `nowpayments` | 加密货币（比特币、USDT 等 100+） | `NOWPAYMENTS_API_KEY` |
+| `stripe` | 信用卡（Visa/Mastercard） | `STRIPE_API_KEY` |
+
+### NOWPayments 注册配置
+
+1. 去 [nowpayments.io](https://nowpayments.io) 注册
+2. 获取 API Key
+3. 填入 `.env`：
 
 ```env
 PAYMENT_MODE=nowpayments
 NOWPAYMENTS_API_KEY=your-api-key
-NOWPAYMENTS_SANDBOX=true  # set false in production
+NOWPAYMENTS_SANDBOX=true  # 测试时开启，正式环境改为 false
 ```
 
-### Setup Stripe (Credit Cards)
+### Stripe 注册配置
 
-1. Register at [stripe.com](https://stripe.com)
-2. Get API Keys from Dashboard
-3. Add to `.env`:
+1. 去 [stripe.com](https://stripe.com) 注册
+2. 从 Dashboard 获取 API Key
+3. 填入 `.env`：
 
 ```env
 PAYMENT_MODE=stripe
@@ -144,141 +169,38 @@ STRIPE_WEBHOOK_SECRET=whsec_xxx
 
 ---
 
-## 📁 Project Structure
+## 📁 项目结构 / Project Structure
 
 ```
-tg-faka/
-├── web.py                 # FastAPI web admin + API
-├── bot.py                 # Telegram Bot core
-├── database.py            # SQLite async operations
-├── config.py               # Configuration (reads .env)
+Tg-Fake/
+├── web.py                  # FastAPI 管理后台 + API
+├── bot.py                  # Telegram 机器人核心
+├── database.py             # SQLite 异步数据库
+├── config.py               # 读取 .env 配置
 ├── payments/
-│   ├── __init__.py        # Gateway manager + auto-loading
-│   ├── epay.py           # EPAY: order, sign, verify
-│   ├── nowpayments.py     # NOWPayments: crypto payment + IPN
-│   └── stripe_gateway.py  # Stripe: checkout + payment intent
-├── templates/              # Web admin HTML templates
+│   ├── __init__.py         # 网关管理器（按配置自动加载）
+│   ├── epay.py            # 易支付：下单、签名、验证
+│   ├── nowpayments.py     # NOWPayments 加密支付 + IPN
+│   └── stripe_gateway.py  # Stripe 结账 + Payment Intent
+├── templates/               # 管理后台 HTML 模板
 ├── static/
-│   ├── css/style.css       # Dark theme styles
-│   └── js/main.js        # Frontend interaction
+│   ├── css/style.css       # 深色主题样式
+│   └── js/main.js          # 前端交互逻辑
 ├── requirements.txt
 ├── .env.example
-└── DEVELOPMENT.md         # Developer documentation
+└── DEVELOPMENT.md           # 开发者文档（API 详情）
 ```
 
 ---
 
-## 🔌 API Reference
-
-### Products
-
-```
-GET    /api/products              List all products
-POST   /api/products              Create product
-DELETE /api/products/{id}         Delete product
-GET    /api/products/{id}/stock   Get stock list
-POST   /api/products/{id}/stock   Add stock (form: contents)
-DELETE /api/products/{id}/stock   Clear stock
-```
-
-### Orders & Stats
-
-```
-GET /api/orders          List all orders
-GET /api/stats           Revenue, inventory, order stats
-GET /api/payments/gateways   List active payment gateways
-```
-
-### Webhooks
-
-```
-GET  /webhook/epay           EPAY callback
-POST /webhook/stripe         Stripe webhook
-GET  /webhook/nowpayments    NOWPayments IPN
-```
-
----
-
-## 📸 Screenshots
-
-<details>
-<summary><b>📊 Dashboard</b></summary>
-
-![Dashboard](screenshots/dashboard.png)
-
-</details>
-
-<details>
-<summary><b>📦 Product Management</b></summary>
-
-![Products](screenshots/products.png)
-
-</details>
-
-<details>
-<summary><b>📋 Order Management</b></summary>
-
-![Orders](screenshots/orders.png)
-
-</details>
-
----
-
-## 🤖 Bot User Flow
-
-```
-/start → 👋 Welcome
-/products → 🛍️ Browse products
-  → 📦 Click product → 🛒 Buy
-    → 💳 Payment link (or simulate)
-      → ✅ Auto-deliver card/key
-```
-
-### Telegram Admin Commands
-
-| Command | Description |
-|---------|-------------|
-| `/admin` | Admin panel |
-| `/add <name> <desc> <price>` | Add new product |
-| `/stock <id>` | View stock for product |
-| `/addstock <id>` | Add stock items |
-
----
-
-## 🗄️ Database
-
-SQLite — zero configuration, auto-created on first run.
-
-```sql
--- Main tables
-products        -- Product catalog
-product_items   -- Inventory (one row = one card/key)
-orders          -- Order records
-```
-
----
-
-## 📝 License
+## 📝 License / 许可证
 
 MIT
 
 ---
 
-<a id="readme-en"></a>
+<div align="center">
 
-## 🌐 English Version
+🌐 **Language**: [English ↑](#english--quick-start) · [中文 ↑](#中文--快速上手)
 
-*Telegram Auto Card Delivery System — open-source, self-hosted digital goods seller bot.*
-
-**Quick Start:**
-
-```bash
-git clone https://github.com/your-username/tg-faka.git
-cd tg-faka
-pip install -r requirements.txt
-python -m uvicorn web:app --host 0.0.0.0 --port 8001
-```
-
-Access admin at: `http://localhost:8001`
-
-See [full API reference](#api-reference) and [payment setup](#payment-gateways) above.
+</div>
